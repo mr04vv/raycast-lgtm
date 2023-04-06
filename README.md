@@ -15,7 +15,7 @@ ni  # yarn installとかでもいける？
 nr build # yarn build?
 ```
 
-Raycast上でimport extension
+Raycast上でimport extensionを選択して、本ディレクトリを選択してOpen
 
 ![image](https://user-images.githubusercontent.com/24749358/230246104-3741fa39-a803-4387-8263-9eab6cccb85e.png)
 
