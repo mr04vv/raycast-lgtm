@@ -5,6 +5,7 @@
   "description": "",
   "icon": "command-icon.png",
   "author": "mooriii",
+  "owner": "atrae",
   "license": "MIT",
   "commands": [
     {
