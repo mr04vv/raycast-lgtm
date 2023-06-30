@@ -3,41 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import fetch from "node-fetch";
 
 export default function Command() {
-  const state = useFetch();
-
-  return (
-    <List isLoading={state.isLoading} isShowingDetail>
-      {state.results.map((result) => (
-        <List.Item
-          key={result.url}
-          title={result.url}
-          detail={imagePreview(result.url)}
-          icon={result.url}
-          actions={
-            <ActionPanel>
-              {pasteActionMarkdown(result.url)}
-              {pasteAction(result.url)}
-            </ActionPanel>
-          }
-        />
-      ))}
-    </List>
-  );
-}
-
-function imagePreview(url: string) {
-  return <List.Item.Detail markdown={`![LGTM](${url})`} />;
-}
-
-function pasteActionMarkdown(url: string) {
-  return <Action.Paste content={`![LGTM](${url})`} shortcut={{ modifiers: ["cmd"], key: "c" }} />;
-}
-
-function pasteAction(url: string) {
-  return <Action.Paste content={`${url}`} shortcut={{ modifiers: ["cmd"], key: "enter" }} />;
-}
-
-function useFetch() {
   const [state, setState] = useState<ImageState>({ results: [], isLoading: true });
   const cancelRef = useRef<AbortController | null>(null);
   cancelRef.current?.abort();
@@ -65,9 +30,64 @@ function useFetch() {
       results: images,
       isLoading: false,
     }));
-    return state;
   }
-  return state;
+
+  return (
+    <List isLoading={state.isLoading} isShowingDetail>
+      <List.Item
+        key={"reload"}
+        title={"検索結果をリロード  ⌘ R"}
+        actions={
+          <ActionPanel>
+            <Action
+              title="Reload result"
+              onAction={() => {
+                if (cancelRef.current) {
+                  fetchImages(cancelRef.current.signal);
+                }
+              }}
+              shortcut={{ modifiers: ["cmd"], key: "r" }}
+            />
+          </ActionPanel>
+        }
+      />
+      {state.results.map((result) => (
+        <List.Item
+          key={result.url}
+          title={result.url}
+          detail={imagePreview(result.url)}
+          icon={result.url}
+          actions={
+            <ActionPanel>
+              {pasteActionMarkdown(result.url)}
+              {pasteAction(result.url)}
+              <Action
+                title="Reload result"
+                onAction={() => {
+                  if (cancelRef.current) {
+                    fetchImages(cancelRef.current.signal);
+                  }
+                }}
+                shortcut={{ modifiers: ["cmd"], key: "r" }}
+              />
+            </ActionPanel>
+          }
+        />
+      ))}
+    </List>
+  );
+}
+
+function imagePreview(url: string) {
+  return <List.Item.Detail markdown={`![LGTM](${url})`} />;
+}
+
+function pasteActionMarkdown(url: string) {
+  return <Action.Paste content={`![LGTM](${url})`} shortcut={{ modifiers: ["cmd"], key: "c" }} />;
+}
+
+function pasteAction(url: string) {
+  return <Action.Paste content={`${url}`} shortcut={{ modifiers: ["cmd"], key: "enter" }} />;
 }
 
 interface ImageState {
